@@ -10,15 +10,14 @@ import (
 
 func main() {
 	topIds := fetchTopIds()
-	// fmt.Println(topIds)
 
-	stories := fetchStories(topIds)
+	currentPage := 1
+
+	stories := fetchStories(topIds, currentPage)
 
 	storiesSorted := sortStories(stories)
 
-	for _, story := range storiesSorted {
-		fmt.Printf("%d. %s\n", story.Rank, story.Title)
-	}
+	renderStories(storiesSorted)
 }
 
 func fetchTopIds() []int {
@@ -41,12 +40,12 @@ func fetchTopIds() []int {
 	return topIds
 }
 
-func fetchStories(ids []int) []Story {
+func fetchStories(ids []int, currentPage int) []Story {
 	ch := make(chan Story)
 	var wg sync.WaitGroup
 
-	for i, id := range ids {
-		rank := i + 1
+	for i, id := range ids[currentPage*9-9 : currentPage*9] {
+		rank := currentPage*9 - 8 + i
 		wg.Add(1)
 		go fetchStory(id, rank, ch, &wg)
 	}
@@ -106,4 +105,10 @@ func sortStories(stories []Story) []Story {
 	})
 
 	return stories
+}
+
+func renderStories(stories []Story) {
+	for i, story := range stories {
+		fmt.Printf("%d | %d. %s\n", i+1, story.Rank, story.Title)
+	}
 }
