@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"sort"
 	"sync"
 )
@@ -13,11 +14,7 @@ func main() {
 
 	currentPage := 1
 
-	stories := fetchStories(topIds, currentPage)
-
-	storiesSorted := sortStories(stories)
-
-	renderStories(storiesSorted)
+	runMainLoop(topIds, &currentPage)
 }
 
 func fetchTopIds() []int {
@@ -38,6 +35,18 @@ func fetchTopIds() []int {
 	}
 
 	return topIds
+}
+
+func runMainLoop(topIds []int, currentPage *int) {
+	stories := fetchStories(topIds, *currentPage)
+
+	storiesSorted := sortStories(stories)
+
+	renderStories(storiesSorted)
+
+	scanInput(*&currentPage)
+
+	runMainLoop(topIds, currentPage)
 }
 
 func fetchStories(ids []int, currentPage int) []Story {
@@ -107,8 +116,43 @@ func sortStories(stories []Story) []Story {
 	return stories
 }
 
+const BANNER = `   __ ___  __             
+  / // / |/ /__ _    _____      x - exit
+ / _  /    / -_) |/|/ (_-<      n - next
+/_//_/_/|_/\__/|__,__/___/      p - prev`
+
 func renderStories(stories []Story) {
+	fmt.Println(BANNER)
+	fmt.Println()
+
 	for i, story := range stories {
 		fmt.Printf("%d | %d. %s\n", i+1, story.Rank, story.Title)
+	}
+}
+func scanInput(currentPage *int) {
+	var input string
+	_, err := fmt.Scanln(&input)
+	if err != nil {
+		fmt.Println("Error scanning choice")
+		return
+	}
+
+	switch input {
+	case "x":
+		os.Exit(0)
+	case "n":
+		if 500/9 < *currentPage+1 {
+			*currentPage = 500 / 9
+		} else {
+			*currentPage += 1
+		}
+	case "p":
+		if *currentPage-1 < 1 {
+			*currentPage = 1
+		} else {
+			*currentPage -= 1
+		}
+	default:
+		fmt.Println("Error input not supported")
 	}
 }
