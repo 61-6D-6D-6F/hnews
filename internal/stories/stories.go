@@ -10,4 +10,13 @@ type Story struct {
 	Descendants int    `json:"descendants"`
 }
 
+type StoryMode int
+
+const (
+	List StoryMode = iota
+	Detail
+)
+
+var Mode = List
+
 var CurrentPage = 1
