@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"sort"
 	"sync"
 )
 
@@ -25,7 +26,9 @@ func main() {
 		close(ch)
 	}()
 
-	for story := range ch {
+	storiesSorted := sortStories(ch)
+
+	for _, story := range storiesSorted {
 		fmt.Printf("%d. %s\n", story.Rank, story.Title)
 	}
 }
@@ -84,4 +87,18 @@ func fetchStory(id int, rank int, ch chan<- Story, wg *sync.WaitGroup) {
 	ch <- story
 
 	return
+}
+
+func sortStories(ch chan Story) []Story {
+	var stories []Story
+
+	for story := range ch {
+		stories = append(stories, story)
+	}
+
+	sort.Slice(stories, func(left, right int) bool {
+		return stories[left].Rank < stories[right].Rank
+	})
+
+	return stories
 }
