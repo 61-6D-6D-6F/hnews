@@ -12,7 +12,7 @@ func ShowList(topIds []int, currentPage *int) {
 
 	renderList(sortedStories)
 
-	input := scanInput(*&currentPage)
+	input := scanListInput(*&currentPage)
 
 	switch Mode {
 	case List:

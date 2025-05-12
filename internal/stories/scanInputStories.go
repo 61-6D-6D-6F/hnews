@@ -6,7 +6,7 @@ import (
 	"regexp"
 )
 
-func scanInput(currentPage *int) string {
+func scanListInput(currentPage *int) string {
 	var input string
 	_, err := fmt.Scanln(&input)
 	if err != nil {
