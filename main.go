@@ -12,21 +12,9 @@ func main() {
 	topIds := fetchTopIds()
 	// fmt.Println(topIds)
 
-	ch := make(chan Story)
-	var wg sync.WaitGroup
+	stories := fetchStories(topIds)
 
-	for i, id := range topIds {
-		rank := i + 1
-		wg.Add(1)
-		go fetchStory(id, rank, ch, &wg)
-	}
-
-	go func() {
-		wg.Wait()
-		close(ch)
-	}()
-
-	storiesSorted := sortStories(ch)
+	storiesSorted := sortStories(stories)
 
 	for _, story := range storiesSorted {
 		fmt.Printf("%d. %s\n", story.Rank, story.Title)
@@ -51,6 +39,29 @@ func fetchTopIds() []int {
 	}
 
 	return topIds
+}
+
+func fetchStories(ids []int) []Story {
+	ch := make(chan Story)
+	var wg sync.WaitGroup
+
+	for i, id := range ids {
+		rank := i + 1
+		wg.Add(1)
+		go fetchStory(id, rank, ch, &wg)
+	}
+
+	go func() {
+		wg.Wait()
+		close(ch)
+	}()
+	var stories []Story
+
+	for story := range ch {
+		stories = append(stories, story)
+	}
+
+	return stories
 }
 
 type Story struct {
@@ -89,13 +100,7 @@ func fetchStory(id int, rank int, ch chan<- Story, wg *sync.WaitGroup) {
 	return
 }
 
-func sortStories(ch chan Story) []Story {
-	var stories []Story
-
-	for story := range ch {
-		stories = append(stories, story)
-	}
-
+func sortStories(stories []Story) []Story {
 	sort.Slice(stories, func(left, right int) bool {
 		return stories[left].Rank < stories[right].Rank
 	})
