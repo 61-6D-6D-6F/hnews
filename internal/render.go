@@ -1,18 +1,19 @@
-package stories
+package internal
 
 import "fmt"
 
-const BANNER_LIST = `   __ ___  __             
-  / // / |/ /__ _    _____      x - exit
- / _  /    / -_) |/|/ (_-<      n - next
-/_//_/_/|_/\__/|__,__/___/      p - prev`
+const BANNER_LIST = `
+   __ ___  __                   x - exit
+  / // / |/ /__ _    _____      n - next
+ / _  /    / -_) |/|/ (_-<      p - prev
+/_//_/_/|_/\__/|__,__/___/      1-9 - details`
 
 const BANNER_DETAIL = `   __ ___  __             
   / // / |/ /__ _    _____      x - exit
  / _  /    / -_) |/|/ (_-<      b - back
-/_//_/_/|_/\__/|__,__/___/              `
+/_//_/_/|_/\__/|__,__/___/      `
 
-func renderList(stories []Story) {
+func renderStoriesList(stories []Story) {
 	fmt.Println(BANNER_LIST)
 	fmt.Println()
 
@@ -21,7 +22,7 @@ func renderList(stories []Story) {
 	}
 }
 
-func renderDetail(story Story) {
+func renderStoryDetails(story Story) {
 	fmt.Println(BANNER_DETAIL)
 	fmt.Println()
 

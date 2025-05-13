@@ -1,4 +1,4 @@
-package stories
+package internal
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"regexp"
 )
 
-func scanListInput(currentPage *int) string {
+func scanStoriesListInput(currentPage *int) string {
 	var input string
 	_, err := fmt.Scanln(&input)
 	if err != nil {
@@ -32,7 +32,7 @@ func scanListInput(currentPage *int) string {
 			*currentPage -= 1
 		}
 	case num.MatchString(input):
-		Mode = Detail
+		state = Detail
 	default:
 		fmt.Println("Error: input not supported")
 	}
@@ -40,7 +40,7 @@ func scanListInput(currentPage *int) string {
 	return input
 }
 
-func scanDetailInput() {
+func scanStoryDetailsInput() {
 	var input string
 	_, err := fmt.Scanln(&input)
 	if err != nil {
@@ -51,7 +51,7 @@ func scanDetailInput() {
 	case "x":
 		os.Exit(0)
 	case "b":
-		Mode = List
+		state = List
 	default:
 		fmt.Println("Error: input not supported")
 	}

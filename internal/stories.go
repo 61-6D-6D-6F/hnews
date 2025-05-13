@@ -1,4 +1,4 @@
-package stories
+package internal
 
 type Story struct {
 	Rank        int
@@ -10,13 +10,4 @@ type Story struct {
 	Descendants int    `json:"descendants"`
 }
 
-type StoryMode int
-
-const (
-	List StoryMode = iota
-	Detail
-)
-
-var Mode = List
-
-var CurrentPage = 1
+var currentPage = 1

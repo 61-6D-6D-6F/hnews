@@ -1,4 +1,4 @@
-package stories
+package internal
 
 import (
 	"encoding/json"
@@ -7,7 +7,7 @@ import (
 	"sync"
 )
 
-func FetchIds() []int {
+func fetchTopStoriesIds() []int {
 	var topIds []int
 
 	url := ("https://hacker-news.firebaseio.com/v0/topstories.json")

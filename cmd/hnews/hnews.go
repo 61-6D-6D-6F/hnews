@@ -1,11 +1,9 @@
 package main
 
 import (
-	"github.com/61-6D-6D-6F/hnews/internal/stories"
+	"github.com/61-6D-6D-6F/hnews/internal"
 )
 
 func main() {
-	topIds := stories.FetchIds()
-
-	stories.ShowList(topIds, &stories.CurrentPage)
+	internal.Init()
 }
