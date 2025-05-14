@@ -1,7 +1,6 @@
 # HNews
 
-HNews is a cli app to read stories and replies in the terminal from [Hacker News](https://news.ycombinator.com/news) using its offical [API](https://github.com/HackerNews/API)
-
+HNews is a cli app for reading stories and replies on the terminal from [Hacker News](https://news.ycombinator.com/news) using its official [API](https://github.com/HackerNews/API).
 ## Features:
 - fetch and display stories concurrently
 - display story details
