@@ -76,3 +76,24 @@ func fetchStory(id int, rank int, ch chan<- Story, wg *sync.WaitGroup) {
 
 	return
 }
+
+func fetchComment(id int) Comment {
+
+	var comment Comment
+
+	url := fmt.Sprintf("https://hacker-news.firebaseio.com/v0/item/%d.json", id)
+	res, err := http.Get(url)
+	if err != nil {
+		fmt.Printf("Error fetching comment id: %d", id)
+		return comment
+	}
+
+	defer res.Body.Close()
+
+	if err := json.NewDecoder(res.Body).Decode(&comment); err != nil {
+		fmt.Printf("Error decoding comment id: %d", id)
+		return comment
+	}
+
+	return comment
+}

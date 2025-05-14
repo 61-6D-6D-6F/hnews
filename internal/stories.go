@@ -8,6 +8,7 @@ type Story struct {
 	Text        string `json:"text"`
 	Kids        []int  `json:"kids"`
 	Descendants int    `json:"descendants"`
+	Type        string `json:"type"`
 }
 
 var currentPage = 1
