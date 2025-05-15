@@ -43,7 +43,6 @@ func scanStoryListInput(state State) State {
 		if err != nil {
 			fmt.Println()
 			fmt.Println("Error: parsing input number")
-			state.Mode = List
 		} else {
 			state.SelectedStory = state.FetchedStories[num-1]
 			state.Mode = Details
