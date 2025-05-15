@@ -1,5 +1,11 @@
 package internal
 
 func Init() {
-	runStoriesList(fetchTopStoriesIds(), &currentPage)
+	var state State
+
+	state.Mode = List
+	state.StoryIds = fetchStoryIds()
+	state.PageNumber = 1
+
+	runStoryList(state)
 }

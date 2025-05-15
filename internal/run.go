@@ -1,92 +1,46 @@
 package internal
 
-import (
-	"fmt"
-	"strconv"
-)
+func runStoryList(state State) {
+	state.FetchedStories = fetchStories(state.StoryIds, state.PageNumber)
 
-func runStoriesList(topIds []int, currentPage *int) {
-	fetchedStories := fetchStories(topIds, *currentPage)
+	renderStoryList(state.FetchedStories)
 
-	sortedStories := sortStoriesList(fetchedStories)
+	state = scanStoryListInput(state)
 
-	renderStoriesList(sortedStories)
-
-	input := scanStoriesListInput(*&currentPage)
-
-	switch mode {
+	switch state.Mode {
 	case List:
-		runStoriesList(topIds, currentPage)
+		runStoryList(state)
 	case Details:
-		num, err := strconv.Atoi(input)
-		if err != nil {
-			fmt.Println("Error parsing input number")
-			mode = List
-			runStoriesList(topIds, currentPage)
-		} else {
-			runStoryDetails(topIds, sortedStories[num-1], currentPage)
-		}
+		runStoryDetails(state)
 	}
 }
 
-func runStoryDetails(topIds []int, story Story, currentPage *int) {
-	renderStoryDetails(story)
+func runStoryDetails(state State) {
+	renderStoryDetails(state.SelectedStory)
 
-	scanStoryDetailsInput()
+	state = scanStoryDetailsInput(state)
 
-	switch mode {
+	switch state.Mode {
 	case List:
-		runStoriesList(topIds, currentPage)
+		runStoryList(state)
 	case Details:
-		runStoryDetails(topIds, story, currentPage)
+		runStoryDetails(state)
 	case Comments:
-		parentList := []string{"story"}
-		siblingList := [][]int{}
-		siblingPosition := []int{}
-		runComment(topIds, story, *&currentPage, story.Kids, 0, parentList, siblingList, siblingPosition)
+		runComment(state)
 	}
 }
 
-func runComment(topIds []int, story Story, currentPage *int, kids []int,
-	currentComment int, parentList []string, siblingList [][]int, siblingPosition []int) {
+func runComment(state State) {
+	state.FetchedComment = fetchComment(state.CurrentSiblings[state.CurrentPos])
 
-	fetchedComment := fetchComment(kids[currentComment])
+	renderComment(state.FetchedComment)
 
-	renderComment(fetchedComment)
+	state = scanCommentInput(state)
 
-	input, newId := scanCommentInput(fetchedComment, kids, currentComment)
-
-	switch {
-	case input == "b":
-		runParent(topIds, story, currentPage, kids, newId, parentList, siblingList, siblingPosition)
-	case input == "r":
-		runComment(topIds, story, currentPage, kids, newId, parentList, siblingList, siblingPosition)
-	case input == "replies":
-		parentList = append(parentList, "comment")
-		siblingList = append(siblingList, kids)
-		siblingPosition = append(siblingPosition, currentComment)
-		runComment(topIds, story, currentPage, fetchedComment.Kids, newId, parentList, siblingList, siblingPosition)
-	case input == "n" || input == "p":
-		runComment(topIds, story, currentPage, kids, newId, parentList, siblingList, siblingPosition)
-	default:
-		runComment(topIds, story, currentPage, kids, newId, parentList, siblingList, siblingPosition)
-	}
-}
-
-func runParent(topIds []int, story Story, currentPage *int, kids []int,
-	newId int, parentList []string, siblingList [][]int, siblingPosition []int) {
-
-	if len(parentList) == 1 {
-		mode = Details
-		runStoryDetails(topIds, story, currentPage)
-	} else {
-		kids = siblingList[len(parentList)-2]
-		newId = siblingPosition[len(parentList)-2]
-
-		parentList = parentList[:len(parentList)-1]
-		siblingList = siblingList[:len(parentList)-1]
-		siblingPosition = siblingPosition[:len(parentList)-1]
-
-		runComment(topIds, story, currentPage, kids, newId, parentList, siblingList, siblingPosition)
+	switch state.Mode {
+	case Details:
+		runStoryDetails(state)
+	case Comments:
+		runComment(state)
 	}
 }

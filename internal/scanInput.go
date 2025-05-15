@@ -4,103 +4,145 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"strconv"
 )
 
-func scanStoriesListInput(currentPage *int) string {
+func scanStoryListInput(state State) State {
 	var input string
 
 	_, err := fmt.Scanln(&input)
 	if err != nil {
-		fmt.Println("Error scanning input")
-		return input
+		fmt.Println()
+		fmt.Println("Error: scanning input")
+		return state
 	}
 
-	num, _ := regexp.Compile("[1-9]")
+	numbers, _ := regexp.Compile("^[1-9]$")
 
 	switch {
 	case input == "x":
 		os.Exit(0)
 	case input == "n":
-		if 500/9 < *currentPage+1 {
-			*currentPage = 500 / 9
+		if MAX_STORIES/NUM_PER_PAGE < state.PageNumber+1 {
+			state.PageNumber = MAX_STORIES / NUM_PER_PAGE
+			fmt.Println()
 			fmt.Println("This is the last story")
 		} else {
-			*currentPage += 1
+			state.PageNumber += 1
 		}
 	case input == "p":
-		if *currentPage-1 < 1 {
-			*currentPage = 1
+		if state.PageNumber-1 < 1 {
+			state.PageNumber = 1
+			fmt.Println()
 			fmt.Println("This is the first story")
 		} else {
-			*currentPage -= 1
+			state.PageNumber -= 1
 		}
-	case num.MatchString(input):
-		mode = Details
-	default:
-		fmt.Println("Error: input not supported")
-	}
-
-	return input
-}
-
-func scanStoryDetailsInput() {
-	var input string
-	_, err := fmt.Scanln(&input)
-	if err != nil {
-		fmt.Println("Error scanning input")
-	}
-
-	switch input {
-	case "x":
-		os.Exit(0)
-	case "b":
-		mode = List
-	case "c":
-		mode = Comments
-	default:
-		fmt.Println("Error: input not supported")
-	}
-}
-
-func scanCommentInput(comment Comment, storyKids []int, id int) (string, int) {
-	var input string
-
-	newId := id
-
-	_, err := fmt.Scanln(&input)
-	if err != nil {
-		fmt.Println("Error scanning input")
-		return input, newId
-	}
-
-	switch input {
-	case "x":
-		os.Exit(0)
-	case "b":
-	case "r":
-		if len(comment.Kids) != 0 {
-			newId = 0
-			input = "replies"
+	case numbers.MatchString(input):
+		num, err := strconv.Atoi(input)
+		if err != nil {
+			fmt.Println()
+			fmt.Println("Error: parsing input number")
+			state.Mode = List
 		} else {
+			state.SelectedStory = state.FetchedStories[num-1]
+			state.Mode = Details
+		}
+	default:
+		fmt.Println()
+		fmt.Println("Error: input not supported")
+	}
+
+	return state
+}
+
+func scanStoryDetailsInput(state State) State {
+	var input string
+
+	_, err := fmt.Scanln(&input)
+	if err != nil {
+		fmt.Println()
+		fmt.Println("Error: scanning input")
+		return state
+	}
+
+	switch input {
+	case "x":
+		os.Exit(0)
+	case "b":
+		state.Mode = List
+	case "c":
+		if len(state.SelectedStory.Kids) == 0 {
+			fmt.Println()
+			fmt.Println("Story has no comment yet")
+		} else {
+			state.CurrentSiblings = state.SelectedStory.Kids
+			state.HistorySiblings = [][]int{}
+			state.HistoryPos = []int{}
+			state.CurrentPos = 0
+			state.Mode = Comments
+		}
+	default:
+		fmt.Println()
+		fmt.Println("Error: input not supported")
+	}
+
+	return state
+}
+
+func scanCommentInput(state State) State {
+	var input string
+
+	_, err := fmt.Scanln(&input)
+	if err != nil {
+		fmt.Println()
+		fmt.Println("Error: scanning input")
+		return state
+	}
+
+	switch input {
+	case "x":
+		os.Exit(0)
+	case "b":
+		if len(state.HistorySiblings) == 0 {
+			state.Mode = Details
+		} else {
+			state.CurrentSiblings = state.HistorySiblings[len(state.HistorySiblings)-1]
+			state.CurrentPos = state.HistoryPos[len(state.HistoryPos)-1]
+
+			state.HistorySiblings = state.HistorySiblings[:len(state.HistorySiblings)-1]
+			state.HistoryPos = state.HistoryPos[:len(state.HistoryPos)-1]
+		}
+	case "r":
+		if len(state.FetchedComment.Kids) == 0 {
+			fmt.Println()
 			fmt.Println("Comment has no reply yet")
+		} else {
+			state.HistorySiblings = append(state.HistorySiblings, state.CurrentSiblings)
+			state.HistoryPos = append(state.HistoryPos, state.CurrentPos)
+			state.CurrentSiblings = state.FetchedComment.Kids
+			state.CurrentPos = 0
 		}
 	case "n":
-		if len(storyKids)-1 < id+1 {
-			newId = len(storyKids) - 1
+		if len(state.CurrentSiblings)-1 < state.CurrentPos+1 {
+			state.CurrentPos = len(state.CurrentSiblings) - 1
+			fmt.Println()
 			fmt.Println("This is the last comment of reply chain")
 		} else {
-			newId += 1
+			state.CurrentPos += 1
 		}
 	case "p":
-		if newId-1 < 0 {
-			newId = 0
+		if state.CurrentPos-1 < 0 {
+			state.CurrentPos = 0
+			fmt.Println()
 			fmt.Println("This is the first comment of reply chain")
 		} else {
-			newId -= 1
+			state.CurrentPos -= 1
 		}
 	default:
+		fmt.Println()
 		fmt.Println("Error: input not supported")
 	}
 
-	return input, newId
+	return state
 }

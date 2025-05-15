@@ -7,5 +7,3 @@ const (
 	Details
 	Comments
 )
-
-var mode = List
