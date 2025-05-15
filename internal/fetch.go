@@ -7,34 +7,39 @@ import (
 	"sync"
 )
 
-func fetchTopStoriesIds() []int {
-	var topIds []int
+func fetchStoryIds() []int {
+	var storyIds []int
 
 	url := ("https://hacker-news.firebaseio.com/v0/topstories.json")
 	res, err := http.Get(url)
 	if err != nil {
-		fmt.Println("Error fetching ids of top stories")
-		return topIds
+		fmt.Println()
+		fmt.Println("Error: fetching story ids")
+		return storyIds
 	}
 
 	defer res.Body.Close()
 
-	if err := json.NewDecoder(res.Body).Decode(&topIds); err != nil {
-		fmt.Println("Error decoding ids of top stories response")
-		return topIds
+	if err := json.NewDecoder(res.Body).Decode(&storyIds); err != nil {
+		fmt.Println()
+		fmt.Println("Error: decoding story ids")
+		return storyIds
 	}
 
-	return topIds
+	return storyIds
 }
 
-func fetchStories(ids []int, currentPage int) []Story {
+func fetchStories(storyIds []int, pageNumber int) []Story {
 	ch := make(chan Story)
 	var wg sync.WaitGroup
 
-	for i, id := range ids[currentPage*9-9 : currentPage*9] {
-		rank := currentPage*9 - 8 + i
+	start := pageNumber*NUM_PER_PAGE - NUM_PER_PAGE
+	end := pageNumber * NUM_PER_PAGE
+
+	for i, storyId := range storyIds[start:end] {
+		rank := pageNumber*NUM_PER_PAGE - 8 + i
 		wg.Add(1)
-		go fetchStory(id, rank, ch, &wg)
+		go fetchStory(storyId, rank, ch, &wg)
 	}
 
 	go func() {
@@ -48,27 +53,29 @@ func fetchStories(ids []int, currentPage int) []Story {
 		stories = append(stories, story)
 	}
 
-	return stories
+	return sortStoriesList(stories)
 }
 
-func fetchStory(id int, rank int, ch chan<- Story, wg *sync.WaitGroup) {
+func fetchStory(storyId int, rank int, ch chan<- Story, wg *sync.WaitGroup) {
 	var story Story
 
 	story.Rank = rank
 
 	defer wg.Done()
 
-	url := fmt.Sprintf("https://hacker-news.firebaseio.com/v0/item/%d.json", id)
+	url := fmt.Sprintf("https://hacker-news.firebaseio.com/v0/item/%d.json", storyId)
 	res, err := http.Get(url)
 	if err != nil {
-		fmt.Printf("Error fetching story id: %d", id)
+		fmt.Println()
+		fmt.Printf("Error: fetching story id: %d", storyId)
 		return
 	}
 
 	defer res.Body.Close()
 
 	if err := json.NewDecoder(res.Body).Decode(&story); err != nil {
-		fmt.Printf("Error decoding story id: %d", id)
+		fmt.Println()
+		fmt.Printf("Error: decoding story id: %d", storyId)
 		return
 	}
 
@@ -77,21 +84,22 @@ func fetchStory(id int, rank int, ch chan<- Story, wg *sync.WaitGroup) {
 	return
 }
 
-func fetchComment(id int) Comment {
-
+func fetchComment(commentId int) Comment {
 	var comment Comment
 
-	url := fmt.Sprintf("https://hacker-news.firebaseio.com/v0/item/%d.json", id)
+	url := fmt.Sprintf("https://hacker-news.firebaseio.com/v0/item/%d.json", commentId)
 	res, err := http.Get(url)
 	if err != nil {
-		fmt.Printf("Error fetching comment id: %d", id)
+		fmt.Println()
+		fmt.Printf("Error: fetching comment id: %d", commentId)
 		return comment
 	}
 
 	defer res.Body.Close()
 
 	if err := json.NewDecoder(res.Body).Decode(&comment); err != nil {
-		fmt.Printf("Error decoding comment id: %d", id)
+		fmt.Println()
+		fmt.Printf("Error: decoding comment id: %d", commentId)
 		return comment
 	}
 
