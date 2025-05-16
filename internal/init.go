@@ -24,6 +24,9 @@ func Init() {
 
 		display.Fetch()
 		display.Render()
-		state = display.Scan()
+
+		input := scan()
+
+		state = display.ChangeState(input)
 	}
 }
