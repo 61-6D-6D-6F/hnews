@@ -7,5 +7,23 @@ func Init() {
 	state.StoryIds = fetchStoryIds()
 	state.PageNumber = 1
 
-	runStoryList(state)
+	var screen Screen
+	var display *Display
+
+	for {
+		switch state.Mode {
+		case List:
+			screen = NewListMenu(state)
+		case Details:
+			screen = NewDetailsMenu(state)
+		case Comments:
+			screen = NewCommentMenu(state)
+		}
+
+		display = NewDisplay(screen)
+
+		display.Fetch()
+		display.Render()
+		state = display.Scan()
+	}
 }
