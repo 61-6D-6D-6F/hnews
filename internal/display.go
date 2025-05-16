@@ -3,7 +3,7 @@ package internal
 type Screen interface {
 	Fetch()
 	Render()
-	Scan() State
+	ChangeState(string) State
 }
 
 type Display struct {
@@ -24,6 +24,6 @@ func (d *Display) Render() {
 	d.screen.Render()
 }
 
-func (d *Display) Scan() State {
-	return d.screen.Scan()
+func (d *Display) ChangeState(s string) State {
+	return d.screen.ChangeState(s)
 }

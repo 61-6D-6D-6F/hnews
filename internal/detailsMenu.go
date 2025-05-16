@@ -44,16 +44,7 @@ func (d *DetailsMenu) Render() {
 	}
 }
 
-func (d *DetailsMenu) Scan() State {
-	var input string
-
-	_, err := fmt.Scanln(&input)
-	if err != nil {
-		fmt.Println()
-		fmt.Println("Error: scanning input")
-		return d.state
-	}
-
+func (d *DetailsMenu) ChangeState(input string) State {
 	switch input {
 	case "x":
 		os.Exit(0)
@@ -74,5 +65,6 @@ func (d *DetailsMenu) Scan() State {
 		fmt.Println()
 		fmt.Println("Error: input not supported")
 	}
+
 	return d.state
 }

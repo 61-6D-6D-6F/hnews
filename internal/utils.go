@@ -65,3 +65,15 @@ func sortStoriesList(stories []Story) []Story {
 
 	return stories
 }
+
+func scan() string {
+	var input string
+
+	_, err := fmt.Scanln(&input)
+	if err != nil {
+		fmt.Println()
+		fmt.Println("Error: scanning input")
+	}
+
+	return input
+}

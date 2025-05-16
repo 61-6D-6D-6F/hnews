@@ -66,16 +66,7 @@ func (c *CommentsMenu) Render() {
 	fmt.Printf("%s\n", c.state.FetchedComment.Text)
 }
 
-func (c *CommentsMenu) Scan() State {
-	var input string
-
-	_, err := fmt.Scanln(&input)
-	if err != nil {
-		fmt.Println()
-		fmt.Println("Error: scanning input")
-		return c.state
-	}
-
+func (c *CommentsMenu) ChangeState(input string) State {
 	switch input {
 	case "x":
 		os.Exit(0)

@@ -60,16 +60,7 @@ func (l *ListMenu) Render() {
 	}
 }
 
-func (l *ListMenu) Scan() State {
-	var input string
-
-	_, err := fmt.Scanln(&input)
-	if err != nil {
-		fmt.Println()
-		fmt.Println("Error: scanning input")
-		return l.state
-	}
-
+func (l *ListMenu) ChangeState(input string) State {
 	numbers, _ := regexp.Compile("^[1-9]$")
 
 	switch {
