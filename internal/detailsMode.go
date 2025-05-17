@@ -10,20 +10,20 @@ const BANNER_DETAIL = `   __ ___  __
  / _  /    / -_) |/|/ (_-<      b - back
 /_//_/_/|_/\__/|__,__/___/      c - comments`
 
-type DetailsMenu struct {
+type DetailsMode struct {
 	state State
 }
 
-func NewDetailsMenu(s State) *DetailsMenu {
-	return &DetailsMenu{
+func NewDetailsMode(s State) *DetailsMode {
+	return &DetailsMode{
 		state: s,
 	}
 }
 
-func (d *DetailsMenu) Fetch() {
+func (d *DetailsMode) Fetch() {
 }
 
-func (d *DetailsMenu) Render() {
+func (d *DetailsMode) Render() {
 
 	fmt.Println(BANNER_DETAIL)
 	fmt.Println()
@@ -44,7 +44,7 @@ func (d *DetailsMenu) Render() {
 	}
 }
 
-func (d *DetailsMenu) ChangeState(input string) State {
+func (d *DetailsMode) ChangeState(input string) State {
 	switch input {
 	case "x":
 		os.Exit(0)

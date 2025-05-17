@@ -14,17 +14,17 @@ const BANNER_LIST = `
  / _  /    / -_) |/|/ (_-<      p - prev
 /_//_/_/|_/\__/|__,__/___/      1-9 - details`
 
-type ListMenu struct {
+type ListMode struct {
 	state State
 }
 
-func NewListMenu(s State) *ListMenu {
-	return &ListMenu{
+func NewListMode(s State) *ListMode {
+	return &ListMode{
 		state: s,
 	}
 }
 
-func (l *ListMenu) Fetch() {
+func (l *ListMode) Fetch() {
 	ch := make(chan Story)
 	var wg sync.WaitGroup
 
@@ -51,7 +51,7 @@ func (l *ListMenu) Fetch() {
 	l.state.FetchedStories = sortStoriesList(stories)
 }
 
-func (l *ListMenu) Render() {
+func (l *ListMode) Render() {
 	fmt.Println(BANNER_LIST)
 	fmt.Println()
 
@@ -60,7 +60,7 @@ func (l *ListMenu) Render() {
 	}
 }
 
-func (l *ListMenu) ChangeState(input string) State {
+func (l *ListMode) ChangeState(input string) State {
 	numbers, _ := regexp.Compile("^[1-9]$")
 
 	switch {

@@ -12,17 +12,17 @@ const BANNER_COMMENT = `   __ ___  __
  / _  /    / -_) |/|/ (_-<      b - back    r - replies
 /_//_/_/|_/\__/|__,__/___/      n - next    p - prev`
 
-type CommentsMenu struct {
+type CommentsMode struct {
 	state State
 }
 
-func NewCommentMenu(s State) *CommentsMenu {
-	return &CommentsMenu{
+func NewCommentsMode(s State) *CommentsMode {
+	return &CommentsMode{
 		state: s,
 	}
 }
 
-func (c *CommentsMenu) Fetch() {
+func (c *CommentsMode) Fetch() {
 	commentId := c.state.CurrentSiblings[c.state.CurrentPos]
 
 	url := fmt.Sprintf("https://hacker-news.firebaseio.com/v0/item/%d.json", commentId)
@@ -42,7 +42,7 @@ func (c *CommentsMenu) Fetch() {
 	}
 }
 
-func (c *CommentsMenu) Render() {
+func (c *CommentsMode) Render() {
 	fmt.Println(BANNER_COMMENT)
 	fmt.Println()
 
@@ -52,8 +52,7 @@ func (c *CommentsMenu) Render() {
 		return
 	}
 
-	fmt.Println(" - REPLY CHAIN -")
-	fmt.Printf("[ current / total ]     ")
+	fmt.Printf("Comment tree :     ")
 	for i, pos := range c.state.HistoryPos {
 		fmt.Printf("[ %d / %d ]     ", pos+1, len(c.state.HistorySiblings[i]))
 	}
@@ -66,7 +65,7 @@ func (c *CommentsMenu) Render() {
 	fmt.Printf("%s\n", c.state.FetchedComment.Text)
 }
 
-func (c *CommentsMenu) ChangeState(input string) State {
+func (c *CommentsMode) ChangeState(input string) State {
 	switch input {
 	case "x":
 		os.Exit(0)

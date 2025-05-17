@@ -13,11 +13,11 @@ func Init() {
 	for {
 		switch state.Mode {
 		case List:
-			screen = NewListMenu(state)
+			screen = NewListMode(state)
 		case Details:
-			screen = NewDetailsMenu(state)
+			screen = NewDetailsMode(state)
 		case Comments:
-			screen = NewCommentMenu(state)
+			screen = NewCommentsMode(state)
 		}
 
 		display = NewDisplay(screen)
