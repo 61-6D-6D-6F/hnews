@@ -34,8 +34,6 @@ func (c *CommentsMode) Fetch() {
 
 	defer res.Body.Close()
 
-	c.state.FetchedComment.Kids = []int{}
-
 	if err := json.NewDecoder(res.Body).Decode(&c.state.FetchedComment); err != nil {
 		fmt.Println()
 		fmt.Printf("Error: decoding comment id: %d", commentId)
@@ -88,6 +86,7 @@ func (c *CommentsMode) ChangeState(input string) State {
 			c.state.HistoryPos = append(c.state.HistoryPos, c.state.CurrentPos)
 			c.state.CurrentSiblings = c.state.FetchedComment.Kids
 			c.state.CurrentPos = 0
+			c.state.FetchedComment.Kids = []int{}
 		}
 	case "n":
 		if len(c.state.CurrentSiblings)-1 < c.state.CurrentPos+1 {
