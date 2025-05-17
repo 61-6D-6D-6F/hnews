@@ -71,26 +71,29 @@ func (l *ListMode) ChangeState(input string) State {
 			l.state.PageNumber = MAX_STORIES / NUM_PER_PAGE
 			fmt.Println()
 			fmt.Println("Last story on Hacker News")
-		} else {
-			l.state.PageNumber += 1
+
+			return l.state
 		}
+		l.state.PageNumber += 1
 	case input == "p":
 		if l.state.PageNumber-1 < 1 {
 			l.state.PageNumber = 1
 			fmt.Println()
 			fmt.Println("First story on Hacker News")
-		} else {
-			l.state.PageNumber -= 1
+
+			return l.state
 		}
+		l.state.PageNumber -= 1
 	case numbers.MatchString(input):
 		num, err := strconv.Atoi(input)
 		if err != nil {
 			fmt.Println()
 			fmt.Println("Error: parsing input number")
-		} else {
-			l.state.SelectedStory = l.state.FetchedStories[num-1]
-			l.state.Mode = Details
+
+			return l.state
 		}
+		l.state.SelectedStory = l.state.FetchedStories[num-1]
+		l.state.Mode = Details
 	default:
 		fmt.Println()
 		fmt.Println("Error: input not supported")

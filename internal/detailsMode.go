@@ -54,13 +54,14 @@ func (d *DetailsMode) ChangeState(input string) State {
 		if len(d.state.SelectedStory.Kids) == 0 {
 			fmt.Println()
 			fmt.Println("No comment yet")
-		} else {
-			d.state.CurrentSiblings = d.state.SelectedStory.Kids
-			d.state.HistorySiblings = [][]int{}
-			d.state.HistoryPos = []int{}
-			d.state.CurrentPos = 0
-			d.state.Mode = Comments
+
+			return d.state
 		}
+		d.state.CurrentSiblings = d.state.SelectedStory.Kids
+		d.state.HistorySiblings = [][]int{}
+		d.state.HistoryPos = []int{}
+		d.state.CurrentPos = 0
+		d.state.Mode = Comments
 	default:
 		fmt.Println()
 		fmt.Println("Error: input not supported")
