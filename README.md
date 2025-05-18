@@ -14,7 +14,7 @@ HNews is a cli app for reading stories and replies on the terminal from [Hacker 
 - b - go back one layer
 - c - display comment
 - r - display relpy
-- 
+
 ## Screenshots:
 
 ### List of stories:
