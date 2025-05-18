@@ -75,8 +75,8 @@ func TestDetailsChangeStateNotSupported(t *testing.T) {
 
 			// not supported
 			[]State{
-				{Mode: List, PageNumber: 2},
-				{Mode: List, PageNumber: 2}},
+				{Mode: Details, PageNumber: 2},
+				{Mode: Details, PageNumber: 2}},
 		)
 	}
 }

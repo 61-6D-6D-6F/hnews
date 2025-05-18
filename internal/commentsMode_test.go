@@ -114,8 +114,8 @@ func TestCommentsChangeStateNotSupported(t *testing.T) {
 
 			// not supported
 			[]State{
-				{Mode: List, PageNumber: 2},
-				{Mode: List, PageNumber: 2}},
+				{Mode: Comments, PageNumber: 2},
+				{Mode: Comments, PageNumber: 2}},
 		)
 	}
 }
