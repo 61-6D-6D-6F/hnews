@@ -34,7 +34,19 @@ func (l *ListMode) Fetch() {
 	for i, storyId := range l.state.StoryIds[start:end] {
 		rank := l.state.PageNumber*NUM_PER_PAGE - 8 + i
 		wg.Add(1)
-		go fetchStory(storyId, rank, ch, &wg)
+		go func() {
+			var story Story
+
+			story.Rank = rank
+
+			defer wg.Done()
+
+			url := fmt.Sprintf("https://hacker-news.firebaseio.com/v0/item/%d.json", storyId)
+
+			fetchUrl(url, &story)
+
+			ch <- story
+		}()
 	}
 
 	go func() {
