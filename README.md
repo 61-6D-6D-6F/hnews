@@ -1,30 +1,61 @@
 # HNews
 
 HNews is a cli app for reading stories and replies on the terminal from [Hacker News](https://news.ycombinator.com/news) using its official [API](https://github.com/HackerNews/API).
-## Features:
-- fetch and display stories concurrently
-- display story details
-- fetch and display comments
 
-## Commands:
-- x - exit app
-- n - next story/comment
-- p - previous story/comment
-- 1-9 - display story details
-- b - go back one layer
-- c - display comment
-- r - display relpy
+## Run:
+```
+go run cmd/hnews/hnews.go
+```
 
-## Screenshots:
+## Test:
+```
+go test internal/*.go -v
+```
+
+## Build:
+### Linux x86-64:
+```
+GOOS=linux GOARCH=amd64 go build -o hnews-linux-amd64 cmd/hnews/hnews.go
+```
+
+### macOS arm64:
+```
+GOOS=darwin GOARCH=arm64 go build -o hnews-macos-arm64 cmd/hnews/hnews.go
+```
+
+### Windows x86-64:
+```
+GOOS=windows GOARCH=amd64 go build -o hnews-windows-amd64.exe cmd/hnews/hnews.go
+```
+
+## Screens:
 
 ### List of stories:
-<img width="552" alt="list" src="https://github.com/user-attachments/assets/d276e333-b6f1-40e4-903d-8603a080bee9" />
+<img width="656" alt="list" src="https://github.com/user-attachments/assets/4a479df7-8ffd-47b2-807f-e3bfe533e8e4" />
+
+Commands:
+- x - exit app
+- n - next story page
+- p - previous story page
+- 1-9 - display story details
 
 ### Story details:
-<img width="552" alt="details" src="https://github.com/user-attachments/assets/210be646-25f7-4bcd-be38-deec7bf4decd" />
+<img width="656" alt="details" src="https://github.com/user-attachments/assets/e48ec3a4-846c-4aa5-99a8-62e93e64849c" />
 
-### Comment:
-<img width="552" alt="comment" src="https://github.com/user-attachments/assets/6f37129d-e842-4e1c-9d79-5e750ebfa0bc" />
+Commands:
+- x - exit app
+- b - go back to stories
+- c - display comment
+
+### Comments:
+<img width="656" alt="comments" src="https://github.com/user-attachments/assets/6f8dfe49-8094-4cba-a100-00c649cd22f0" />
+
+Commands:
+- x - exit app
+- n - next story page
+- p - previous story page
+- b - go back one layer
+- r - display reply
 
 ## Acknowledgement:
-The state of the app is WIP, in needs of refactoring.
+The state of the app is WIP, in need of refactoring.
