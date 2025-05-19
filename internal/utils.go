@@ -7,57 +7,35 @@ import (
 	"reflect"
 	"slices"
 	"sort"
-	"sync"
 )
 
 func fetchStoryIds() []int {
 	var storyIds []int
 
 	url := ("https://hacker-news.firebaseio.com/v0/topstories.json")
-	res, err := http.Get(url)
-	if err != nil {
-		fmt.Println()
-		fmt.Println("Error: fetching story ids")
-		return storyIds
-	}
 
-	defer res.Body.Close()
-
-	if err := json.NewDecoder(res.Body).Decode(&storyIds); err != nil {
-		fmt.Println()
-		fmt.Println("Error: decoding story ids")
-		return storyIds
-	}
+	fetchUrl(url, &storyIds)
 
 	return storyIds
 }
 
-func fetchStory(storyId int, rank int, ch chan<- Story, wg *sync.WaitGroup) {
-	var story Story
+type ResponseType interface {
+	[]int | Story | Comment
+}
 
-	story.Rank = rank
-
-	defer wg.Done()
-
-	url := fmt.Sprintf("https://hacker-news.firebaseio.com/v0/item/%d.json", storyId)
+func fetchUrl[T ResponseType](url string, data *T) {
 	res, err := http.Get(url)
 	if err != nil {
 		fmt.Println()
-		fmt.Printf("Error: fetching story id: %d", storyId)
-		return
+		fmt.Printf("Error: fetching url: %s", url)
 	}
 
 	defer res.Body.Close()
 
-	if err := json.NewDecoder(res.Body).Decode(&story); err != nil {
+	if err := json.NewDecoder(res.Body).Decode(data); err != nil {
 		fmt.Println()
-		fmt.Printf("Error: decoding story id: %d", storyId)
-		return
+		fmt.Printf("Error: decoding response: %v", res)
 	}
-
-	ch <- story
-
-	return
 }
 
 func sortStoriesList(stories []Story) []Story {

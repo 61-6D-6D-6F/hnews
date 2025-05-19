@@ -1,9 +1,7 @@
 package internal
 
 import (
-	"encoding/json"
 	"fmt"
-	"net/http"
 	"os"
 )
 
@@ -26,18 +24,8 @@ func (c *CommentsMode) Fetch() {
 	commentId := c.state.CurrentSiblings[c.state.CurrentPos]
 
 	url := fmt.Sprintf("https://hacker-news.firebaseio.com/v0/item/%d.json", commentId)
-	res, err := http.Get(url)
-	if err != nil {
-		fmt.Println()
-		fmt.Printf("Error: fetching comment id: %d", commentId)
-	}
 
-	defer res.Body.Close()
-
-	if err := json.NewDecoder(res.Body).Decode(&c.state.FetchedComment); err != nil {
-		fmt.Println()
-		fmt.Printf("Error: decoding comment id: %d", commentId)
-	}
+	fetchUrl(url, &c.state.FetchedComment)
 }
 
 func (c *CommentsMode) Render() {
