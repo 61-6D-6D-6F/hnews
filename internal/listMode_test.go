@@ -33,7 +33,7 @@ func TestListChangeStateNext(t *testing.T) {
 		// last page
 		[]State{
 			{PageNumber: MAX_STORIES / NUM_PER_PAGE},
-			{PageNumber: MAX_STORIES / NUM_PER_PAGE}},
+			{PageNumber: MAX_STORIES / NUM_PER_PAGE, UiInfo: "Last story on Hacker News"}},
 	)
 }
 
@@ -53,7 +53,7 @@ func TestListChangeStatePrev(t *testing.T) {
 		// first page
 		[]State{
 			{PageNumber: 1},
-			{PageNumber: 1}},
+			{PageNumber: 1, UiInfo: "First story on Hacker News"}},
 	)
 }
 
@@ -88,7 +88,7 @@ func TestListChangeStateNotSupported(t *testing.T) {
 			// not supported
 			[]State{
 				{Mode: List, PageNumber: 2},
-				{Mode: List, PageNumber: 2}},
+				{Mode: List, PageNumber: 2, UiInfo: "Error: input not supported"}},
 		)
 	}
 }

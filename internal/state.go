@@ -14,4 +14,5 @@ type State struct {
 	CurrentPos      int
 	HistorySiblings [][]int
 	HistoryPos      []int
+	UiInfo          string
 }

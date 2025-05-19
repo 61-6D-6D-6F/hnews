@@ -5,6 +5,7 @@ import (
 	"os"
 	"regexp"
 	"strconv"
+	"strings"
 	"sync"
 )
 
@@ -64,15 +65,27 @@ func (l *ListMode) Fetch() {
 }
 
 func (l *ListMode) Render() {
-	fmt.Println(BANNER_LIST)
-	fmt.Println()
+	var sB strings.Builder
+
+	if l.state.UiInfo != "" {
+		sB.WriteString("\n")
+		sB.WriteString(l.state.UiInfo)
+		sB.WriteString("\n")
+	}
+
+	sB.WriteString(BANNER_LIST)
+	sB.WriteString("\n\n")
 
 	for i, story := range l.state.FetchedStories {
-		fmt.Printf("%d | %d. %s\n", i+1, story.Rank, story.Title)
+		fmt.Fprintf(&sB, "%d | %d. %s\n", i+1, story.Rank, story.Title)
 	}
+
+	fmt.Println(sB.String())
 }
 
 func (l *ListMode) ChangeState(input string) State {
+	l.state.UiInfo = ""
+
 	numbers, _ := regexp.Compile("^[1-9]$")
 
 	switch {
@@ -81,8 +94,7 @@ func (l *ListMode) ChangeState(input string) State {
 	case input == "n":
 		if MAX_STORIES/NUM_PER_PAGE < l.state.PageNumber+1 {
 			l.state.PageNumber = MAX_STORIES / NUM_PER_PAGE
-			fmt.Println()
-			fmt.Println("Last story on Hacker News")
+			l.state.UiInfo = "Last story on Hacker News"
 
 			return l.state
 		}
@@ -90,8 +102,7 @@ func (l *ListMode) ChangeState(input string) State {
 	case input == "p":
 		if l.state.PageNumber-1 < 1 {
 			l.state.PageNumber = 1
-			fmt.Println()
-			fmt.Println("First story on Hacker News")
+			l.state.UiInfo = "First story on Hacker News"
 
 			return l.state
 		}
@@ -99,16 +110,14 @@ func (l *ListMode) ChangeState(input string) State {
 	case numbers.MatchString(input):
 		num, err := strconv.Atoi(input)
 		if err != nil {
-			fmt.Println()
-			fmt.Println("Error: parsing input number")
+			l.state.UiInfo = "Error: parsing input number"
 
 			return l.state
 		}
 		l.state.SelectedStory = l.state.FetchedStories[num-1]
 		l.state.Mode = Details
 	default:
-		fmt.Println()
-		fmt.Println("Error: input not supported")
+		l.state.UiInfo = "Error: input not supported"
 	}
 
 	return l.state
