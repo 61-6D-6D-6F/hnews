@@ -109,7 +109,7 @@ func TestCommentsChangeStateReply(t *testing.T) {
 // TestCommentsChangeStateNotSupported calls internal.ChangeState with input not supported,
 // checking for a valid state
 func TestCommentsChangeStateNotSupported(t *testing.T) {
-	inputs := []string{"i", "3", "44", "6f", "k9"}
+	inputs := []string{"i", "44", "6f", "k9", "n2", "3 e", "k 7"}
 
 	for _, input := range inputs {
 		testCommentsChangeState(t, input,
