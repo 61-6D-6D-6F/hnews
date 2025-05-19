@@ -1,9 +1,11 @@
 package internal
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"reflect"
 	"slices"
 	"sort"
@@ -47,15 +49,18 @@ func sortStoriesList(stories []Story) []Story {
 }
 
 func scan() string {
-	var input string
+	scanner := bufio.NewScanner(os.Stdin)
 
-	_, err := fmt.Scanln(&input)
-	if err != nil {
+	if scanner.Scan() {
+		return scanner.Text()
+	}
+
+	if err := scanner.Err(); err != nil {
 		fmt.Println()
 		fmt.Println("Error: scanning input")
 	}
 
-	return input
+	return ""
 }
 
 func equalState(s1 State, s2 State) bool {

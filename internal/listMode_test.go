@@ -78,7 +78,7 @@ func TestListChangeStateNum(t *testing.T) {
 // TestListChangeStateNotSupported calls internal.ChangeState with input not supported,
 // checking for a valid state
 func TestListChangeStateNotSupported(t *testing.T) {
-	inputs := []string{"i", "44", "6f", "k9"}
+	inputs := []string{"i", "44", "6f", "k9", "n2", "3 e", "k 7"}
 
 	for _, input := range inputs {
 		testListChangeState(t, input,
