@@ -33,7 +33,8 @@ func TestCommentsChangeStateNext(t *testing.T) {
 		// last comment
 		[]State{
 			{CurrentPos: 2, CurrentSiblings: []int{0, 1, 2}},
-			{CurrentPos: 2, CurrentSiblings: []int{0, 1, 2}}},
+			{CurrentPos: 2, CurrentSiblings: []int{0, 1, 2},
+				UiInfo: "Last comment of the comment chain"}},
 	)
 }
 
@@ -53,7 +54,8 @@ func TestCommentsChangeStatePrev(t *testing.T) {
 		// first comment
 		[]State{
 			{CurrentPos: 0, CurrentSiblings: []int{0, 1, 2}},
-			{CurrentPos: 0, CurrentSiblings: []int{0, 1, 2}}},
+			{CurrentPos: 0, CurrentSiblings: []int{0, 1, 2},
+				UiInfo: "First comment of the comment chain"}},
 	)
 }
 
@@ -90,7 +92,9 @@ func TestCommentsChangeStateReply(t *testing.T) {
 		[]State{
 			{CurrentSiblings: []int{0, 1}, CurrentPos: 1,
 				FetchedComment: Comment{Kids: []int{}}},
-			{CurrentSiblings: []int{0, 1}, CurrentPos: 1}},
+			{CurrentSiblings: []int{0, 1}, CurrentPos: 1,
+				UiInfo: "No reply yet"}},
+
 		// has reply
 		[]State{
 			{CurrentSiblings: []int{0, 1}, CurrentPos: 1,
@@ -115,7 +119,8 @@ func TestCommentsChangeStateNotSupported(t *testing.T) {
 			// not supported
 			[]State{
 				{Mode: Comments, PageNumber: 2},
-				{Mode: Comments, PageNumber: 2}},
+				{Mode: Comments, PageNumber: 2,
+					UiInfo: "Error: input not supported"}},
 		)
 	}
 }

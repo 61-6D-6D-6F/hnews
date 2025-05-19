@@ -59,7 +59,7 @@ func scan() string {
 }
 
 func equalState(s1 State, s2 State) bool {
-	if reflect.TypeOf(State{}).NumField() != 10 ||
+	if reflect.TypeOf(State{}).NumField() != 11 ||
 		s1.Mode != s2.Mode ||
 		!slices.Equal(s1.StoryIds, s2.StoryIds) ||
 		s1.PageNumber != s2.PageNumber ||
@@ -69,7 +69,8 @@ func equalState(s1 State, s2 State) bool {
 		!slices.Equal(s1.CurrentSiblings, s2.CurrentSiblings) ||
 		s1.CurrentPos != s2.CurrentPos ||
 		len(s1.HistorySiblings) != len(s2.HistorySiblings) ||
-		!slices.Equal(s1.HistoryPos, s2.HistoryPos) {
+		!slices.Equal(s1.HistoryPos, s2.HistoryPos) ||
+		s1.UiInfo != s2.UiInfo {
 		return false
 	}
 	for i, story1 := range s1.FetchedStories {

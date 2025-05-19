@@ -45,7 +45,7 @@ func TestDetailsChangeStateComment(t *testing.T) {
 		// no comment
 		[]State{
 			{Mode: Details, SelectedStory: Story{Kids: []int{}}},
-			{Mode: Details}},
+			{Mode: Details, UiInfo: "No comment yet"}},
 		// has comment
 		[]State{
 			{SelectedStory: Story{Kids: []int{0, 1, 2}},
@@ -76,7 +76,7 @@ func TestDetailsChangeStateNotSupported(t *testing.T) {
 			// not supported
 			[]State{
 				{Mode: Details, PageNumber: 2},
-				{Mode: Details, PageNumber: 2}},
+				{Mode: Details, PageNumber: 2, UiInfo: "Error: input not supported"}},
 		)
 	}
 }

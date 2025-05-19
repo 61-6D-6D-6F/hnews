@@ -3,6 +3,7 @@ package internal
 import (
 	"fmt"
 	"os"
+	"strings"
 )
 
 const BANNER_COMMENT = `   __ ___  __             
@@ -29,29 +30,43 @@ func (c *CommentsMode) Fetch() {
 }
 
 func (c *CommentsMode) Render() {
-	fmt.Println(BANNER_COMMENT)
-	fmt.Println()
+	var sB strings.Builder
+
+	if c.state.UiInfo != "" {
+		sB.WriteString("\n")
+		sB.WriteString(c.state.UiInfo)
+		sB.WriteString("\n")
+	}
+
+	sB.WriteString(BANNER_COMMENT)
+	sB.WriteString("\n\n")
 
 	if c.state.FetchedComment.Deleted == true {
-		fmt.Println()
-		fmt.Println("Deleted comment")
+		sB.WriteString("\n")
+		sB.WriteString("Deleted comment")
+
+		fmt.Println(sB.String())
 		return
 	}
 
-	fmt.Printf("Comment tree :     ")
+	fmt.Fprintf(&sB, "Comment tree :     ")
 	for i, pos := range c.state.HistoryPos {
-		fmt.Printf("[ %d / %d ]     ", pos+1, len(c.state.HistorySiblings[i]))
+		fmt.Fprintf(&sB, "[ %d / %d ]     ", pos+1, len(c.state.HistorySiblings[i]))
 	}
-	fmt.Printf("[ %d / %d ]\n", c.state.CurrentPos+1, len(c.state.CurrentSiblings))
-	fmt.Println()
+	fmt.Fprintf(&sB, "[ %d / %d ]\n", c.state.CurrentPos+1, len(c.state.CurrentSiblings))
+	sB.WriteString("\n")
 
-	fmt.Printf("By:         %s\n", c.state.FetchedComment.By)
-	fmt.Printf("Replies:    %d\n", len(c.state.FetchedComment.Kids))
-	fmt.Println()
-	fmt.Printf("%s\n", c.state.FetchedComment.Text)
+	fmt.Fprintf(&sB, "By:         %s\n", c.state.FetchedComment.By)
+	fmt.Fprintf(&sB, "Replies:    %d\n", len(c.state.FetchedComment.Kids))
+	sB.WriteString("\n")
+	fmt.Fprintf(&sB, "%s\n", c.state.FetchedComment.Text)
+
+	fmt.Println(sB.String())
 }
 
 func (c *CommentsMode) ChangeState(input string) State {
+	c.state.UiInfo = ""
+
 	switch input {
 	case "x":
 		os.Exit(0)
@@ -68,8 +83,7 @@ func (c *CommentsMode) ChangeState(input string) State {
 		c.state.HistoryPos = c.state.HistoryPos[:len(c.state.HistoryPos)-1]
 	case "r":
 		if len(c.state.FetchedComment.Kids) == 0 {
-			fmt.Println()
-			fmt.Println("No reply yet")
+			c.state.UiInfo = "No reply yet"
 
 			return c.state
 		}
@@ -81,8 +95,7 @@ func (c *CommentsMode) ChangeState(input string) State {
 	case "n":
 		if len(c.state.CurrentSiblings)-1 < c.state.CurrentPos+1 {
 			c.state.CurrentPos = len(c.state.CurrentSiblings) - 1
-			fmt.Println()
-			fmt.Println("Last comment of the reply chain")
+			c.state.UiInfo = "Last comment of the comment chain"
 
 			return c.state
 		}
@@ -90,15 +103,13 @@ func (c *CommentsMode) ChangeState(input string) State {
 	case "p":
 		if c.state.CurrentPos-1 < 0 {
 			c.state.CurrentPos = 0
-			fmt.Println()
-			fmt.Println("First comment of the reply chain")
+			c.state.UiInfo = "First comment of the comment chain"
 
 			return c.state
 		}
 		c.state.CurrentPos -= 1
 	default:
-		fmt.Println()
-		fmt.Println("Error: input not supported")
+		c.state.UiInfo = "Error: input not supported"
 	}
 
 	return c.state
